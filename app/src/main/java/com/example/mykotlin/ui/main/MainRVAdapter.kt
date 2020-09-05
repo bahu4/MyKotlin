@@ -3,6 +3,7 @@ package com.example.mykotlin.ui.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mykotlin.R
 import com.example.mykotlin.data.entity.Data
@@ -27,9 +28,19 @@ class MainRVAdapter : RecyclerView.Adapter<MainRVAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(note: Data) = with(itemView) {
+
             title_view.text = note.title
             new_task.text = note.task
-            card_view.setBackgroundColor(note.noteColor)
+            val color = when (note.noteColor) {
+                Data.NoteColor.WHITE -> R.color.white
+                Data.NoteColor.YELLOW -> R.color.yellow
+                Data.NoteColor.GREEN -> R.color.green
+                Data.NoteColor.BLUE -> R.color.blue
+                Data.NoteColor.RED -> R.color.red
+                Data.NoteColor.VIOLET -> R.color.violet
+                Data.NoteColor.PINK -> R.color.pink
+            }
+            card_view.setBackgroundColor(getColor(itemView.context, color))
         }
     }
 }

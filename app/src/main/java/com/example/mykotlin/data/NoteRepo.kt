@@ -1,28 +1,33 @@
 package com.example.mykotlin.data
 
 import com.example.mykotlin.data.entity.Data
+import java.util.*
 
 object NoteRepo {
     private val notes: List<Data> = listOf(
         Data(
+            UUID.randomUUID().toString(),
             "Первая",
             "Это первая задача",
-            0xffffeb3b.toInt()
+            Data.NoteColor.WHITE
         ),
         Data(
+            UUID.randomUUID().toString(),
             "Вторая",
             "Это вторая задача",
-            0xfff02292.toInt()
+            Data.NoteColor.YELLOW
         ),
         Data(
+            UUID.randomUUID().toString(),
             "Третья",
             "Это третья задача",
-            0xff4db6ac.toInt()
+            Data.NoteColor.GREEN
         ),
         Data(
+            UUID.randomUUID().toString(),
             "Четвертая",
             "Это четвертая задача",
-            0xff9575cd.toInt()
+            Data.NoteColor.BLUE
         )
     )
 
