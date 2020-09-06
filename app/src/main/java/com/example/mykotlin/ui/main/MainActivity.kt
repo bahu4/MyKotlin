@@ -11,11 +11,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainViewModel
-    private val adapter: MainRVAdapter = MainRVAdapter()
+    lateinit var adapter: MainRVAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        adapter = MainRVAdapter{
+            SecondActivity.start(this, it)
+        }
 
         main_rv.layoutManager = GridLayoutManager(this, 2)
         main_rv.adapter = adapter
