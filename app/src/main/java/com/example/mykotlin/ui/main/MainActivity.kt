@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mykotlin.R
+import com.example.mykotlin.ui.second.SecondActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,10 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.viewState().observe(this,
             Observer { state -> state?.let { it -> adapter.tasks = it.taskList } })
+
+        fab.setOnClickListener {
+            SecondActivity.start(this)
+        }
 
     }
 }

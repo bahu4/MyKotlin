@@ -9,7 +9,8 @@ import com.example.mykotlin.R
 import com.example.mykotlin.data.entity.Data
 import kotlinx.android.synthetic.main.item.view.*
 
-class MainRVAdapter : RecyclerView.Adapter<MainRVAdapter.ViewHolder>() {
+class MainRVAdapter(val onItemClick: ((Data) -> Unit)? = null) :
+    RecyclerView.Adapter<MainRVAdapter.ViewHolder>() {
     var tasks: List<Data> = listOf()
         set(value) {
             field = value
@@ -26,7 +27,7 @@ class MainRVAdapter : RecyclerView.Adapter<MainRVAdapter.ViewHolder>() {
 
     override fun getItemCount() = tasks.size
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(note: Data) = with(itemView) {
 
             title_view.text = note.title
@@ -41,6 +42,9 @@ class MainRVAdapter : RecyclerView.Adapter<MainRVAdapter.ViewHolder>() {
                 Data.NoteColor.PINK -> R.color.pink
             }
             card_view.setBackgroundColor(getColor(itemView.context, color))
+            card_view.setOnClickListener{
+                onItemClick?.invoke(note)
+            }
         }
     }
 }
