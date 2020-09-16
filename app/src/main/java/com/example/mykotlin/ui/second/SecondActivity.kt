@@ -1,21 +1,22 @@
 package com.example.mykotlin.ui.second
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
 import com.example.mykotlin.R
-import com.example.mykotlin.data.entity.Data
+import com.example.mykotlin.common.getColorInt
+import com.example.mykotlin.data.entity.Note
 import com.example.mykotlin.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_second.*
+import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SecondActivity : BaseActivity<Data?, SecondViewState>() {
+class SecondActivity : BaseActivity<SecondViewState.Data, SecondViewState>() {
     companion object {
         private val EXTRA_NOTE = SecondActivity::class.java.name + "extra.NOTE"
         private const val DATE_FORMAT = "dd.MM.yy HH:mm"
@@ -27,11 +28,10 @@ class SecondActivity : BaseActivity<Data?, SecondViewState>() {
                 }
     }
 
-    private var note: Data? = null
-    override val viewModel: SecondViewModel by lazy {
-        ViewModelProvider(this).get(SecondViewModel::class.java)
-    }
+    private var note: Note? = null
+    override val viewModel: SecondViewModel by viewModel()
     override val layout = R.layout.activity_second
+    private var color: Note.NoteColor = Note.NoteColor.WHITE
 
     val textChangeListener = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -49,19 +49,14 @@ class SecondActivity : BaseActivity<Data?, SecondViewState>() {
         super.onCreate(savedInstanceState)
         val noteId = intent.getStringExtra(EXTRA_NOTE)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        noteId?.let { id -> viewModel.loadNote(id) } ?: let {
-            supportActionBar?.title = "Новая замтка"
-        }
+        noteId?.let { id -> viewModel.loadNote(id) }
         init()
     }
 
-    override fun renderData(data: Data?) {
-        this.note = data
-        supportActionBar?.title = note?.let { note ->
-            SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(note.lastChange)
-        } ?: let {
-            getString(R.string.new_note_title)
-        }
+    override fun renderData(data: SecondViewState.Data) {
+        if (data.isDeleted) finish()
+        this.note = data.note
+        init()
     }
 
     private fun saveNote() {
@@ -70,8 +65,9 @@ class SecondActivity : BaseActivity<Data?, SecondViewState>() {
         note = note?.copy(
             title = title_text.text.toString(),
             task = task_text.text.toString(),
-            lastChange = Date()
-        ) ?: Data(
+            lastChange = Date(),
+            noteColor = color
+        ) ?: Note(
             UUID.randomUUID().toString(),
             title_text.text.toString(),
             task_text.text.toString()
@@ -80,11 +76,18 @@ class SecondActivity : BaseActivity<Data?, SecondViewState>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        android.R.id.home -> {
-            onBackPressed()
-            true
-        }
+        android.R.id.home -> onBackPressed().let { true }
+        R.id.add_note -> saveNote().let { true }
+        R.id.delete -> delete().let { true }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    fun delete() {
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.note_del))
+            .setPositiveButton(R.string.yes) { dialog, which -> viewModel.deleteNote() }
+            .setNegativeButton(R.string.no) { dialog, which -> dialog.dismiss() }
+            .show()
     }
 
     private fun init() {
@@ -93,18 +96,11 @@ class SecondActivity : BaseActivity<Data?, SecondViewState>() {
         note?.let { note ->
             title_text.setText(note.title)
             task_text.setText(note.task)
-
-            val color = when (note.noteColor) {
-                Data.NoteColor.WHITE -> R.color.white
-                Data.NoteColor.YELLOW -> R.color.yellow
-                Data.NoteColor.GREEN -> R.color.green
-                Data.NoteColor.BLUE -> R.color.blue
-                Data.NoteColor.RED -> R.color.red
-                Data.NoteColor.VIOLET -> R.color.violet
-                Data.NoteColor.PINK -> R.color.pink
-            }
-            textInputLayout2.setBackgroundColor(color)
-        }
+            title_text.setSelection(title_text.text?.length ?: 0)
+            task_text.setSelection(task_text.text?.length ?: 0)
+            SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(note.lastChange)
+            appbar.setBackgroundColor(note.noteColor.getColorInt(this))
+        } ?: let { supportActionBar?.title = getString(R.string.new_note_title) }
         title_text.addTextChangedListener(textChangeListener)
         task_text.addTextChangedListener(textChangeListener)
     }
