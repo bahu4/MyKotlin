@@ -15,7 +15,7 @@ class SecondViewModel(val noteRepo: NoteRepo) :
     }
 
     fun loadNote(noteId: String) {
-        NoteRepo.getNoteById(noteId).observeForever { result ->
+        noteRepo.getNoteById(noteId).observeForever { result ->
             result ?: return@observeForever
             when (result) {
                 is NoteResult.Success<*> -> {
@@ -31,7 +31,7 @@ class SecondViewModel(val noteRepo: NoteRepo) :
 
     override fun onCleared() {
         pendingNote?.let {
-            NoteRepo.saveNote(it)
+            noteRepo.saveNote(it)
         }
     }
 

@@ -1,11 +1,9 @@
 package com.example.mykotlin.data
 
 import com.example.mykotlin.data.entity.Note
-import com.example.mykotlin.data.provider.FirestoreDataProvider
 import com.example.mykotlin.data.provider.RemoteDataProvider
 
-object NoteRepo {
-    val remoteProvider: RemoteDataProvider = FirestoreDataProvider()
+class NoteRepo(val remoteProvider: RemoteDataProvider) {
 
     fun getNotes() = remoteProvider.subscribeToAllNotes()
     fun getNoteById(id: String) = remoteProvider.getNoteById(id)

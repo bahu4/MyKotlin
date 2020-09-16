@@ -1,13 +1,11 @@
 package com.example.mykotlin.ui.login
 
-import androidx.lifecycle.ViewModelProvider
 import com.example.mykotlin.ui.base.BaseActivity
 import com.example.mykotlin.ui.main.MainActivity
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class LoginActivity : BaseActivity<Boolean?, LoginViewState>() {
-    override val viewModel: LoginViewModel by lazy {
-        ViewModelProvider(this).get(LoginViewModel::class.java)
-    }
+    override val viewModel: LoginViewModel by viewModel()
 
     override val layout = null
 

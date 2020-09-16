@@ -9,14 +9,13 @@ import com.example.mykotlin.data.model.NoteResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FirestoreDataProvider : RemoteDataProvider {
+class FirestoreDataProvider(val store: FirebaseFirestore, val auth: FirebaseAuth) :
+    RemoteDataProvider {
     companion object {
         private const val NOTES_COLLECTION = "notes"
         private const val USERS_COLLECTION = "users"
     }
 
-    private val store by lazy { FirebaseFirestore.getInstance() }
-    private val auth by lazy { FirebaseAuth.getInstance() }
     private val currentUser
         get() = auth.currentUser
 

@@ -16,6 +16,7 @@ import com.example.mykotlin.ui.login.LoginActivity
 import com.example.mykotlin.ui.second.SecondActivity
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
     companion object {
@@ -25,9 +26,7 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
         }
     }
 
-    override val viewModel: BaseViewModel<List<Note>?, MainViewState> by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
-    }
+    override val viewModel: MainViewModel by viewModel()
 
     override val layout = R.layout.activity_main
     lateinit var adapter: MainRVAdapter

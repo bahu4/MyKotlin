@@ -6,7 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View.inflate
+import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import com.example.mykotlin.R
 import com.example.mykotlin.common.getColorInt
 import com.example.mykotlin.data.entity.Note
@@ -75,9 +79,13 @@ class SecondActivity : BaseActivity<SecondViewState.Data, SecondViewState>() {
         note?.let { viewModel.save(it) }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?) = menuInflater.inflate(R.menu.note, menu).let {
+        true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         android.R.id.home -> onBackPressed().let { true }
-        R.id.add_note -> saveNote().let { true }
+        R.id.add_note -> onBackPressed().let { true }
         R.id.delete -> delete().let { true }
         else -> super.onOptionsItemSelected(item)
     }
