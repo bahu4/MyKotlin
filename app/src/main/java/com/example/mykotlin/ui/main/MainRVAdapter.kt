@@ -42,7 +42,7 @@ class MainRVAdapter(val onItemClick: ((Data) -> Unit)? = null) :
                 Data.NoteColor.PINK -> R.color.pink
             }
             card_view.setBackgroundColor(getColor(itemView.context, color))
-            itemView.setOnClickListener{
+            itemView.setOnClickListener {
                 onItemClick?.invoke(note)
             }
         }
