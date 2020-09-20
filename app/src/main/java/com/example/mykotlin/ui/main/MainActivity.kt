@@ -9,15 +9,16 @@ import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mykotlin.R
-import com.example.mykotlin.data.entity.Data
+import com.example.mykotlin.data.entity.Note
 import com.example.mykotlin.ui.base.BaseActivity
 import com.example.mykotlin.ui.base.BaseViewModel
 import com.example.mykotlin.ui.login.LoginActivity
 import com.example.mykotlin.ui.second.SecondActivity
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Data>?, MainViewState>() {
+class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, MainActivity::class.java)
@@ -25,9 +26,7 @@ class MainActivity : BaseActivity<List<Data>?, MainViewState>() {
         }
     }
 
-    override val viewModel: BaseViewModel<List<Data>?, MainViewState> by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
-    }
+    override val viewModel: MainViewModel by viewModel()
 
     override val layout = R.layout.activity_main
     lateinit var adapter: MainRVAdapter
@@ -45,7 +44,7 @@ class MainActivity : BaseActivity<List<Data>?, MainViewState>() {
         }
     }
 
-    override fun renderData(data: List<Data>?) {
+    override fun renderData(data: List<Note>?) {
         data?.let { adapter.tasks = it }
     }
 

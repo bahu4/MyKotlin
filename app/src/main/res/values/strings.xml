@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">My Kotlin</string>
     <string name="new_note_title">Новая заметка</string>
+    <string name="note_del">Удалить запись?!</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

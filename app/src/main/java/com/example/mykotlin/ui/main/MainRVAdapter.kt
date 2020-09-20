@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mykotlin.R
-import com.example.mykotlin.data.entity.Data
+import com.example.mykotlin.data.entity.Note
 import kotlinx.android.synthetic.main.item.view.*
 
-class MainRVAdapter(val onItemClick: ((Data) -> Unit)? = null) :
+class MainRVAdapter(val onItemClick: ((Note) -> Unit)? = null) :
     RecyclerView.Adapter<MainRVAdapter.ViewHolder>() {
-    var tasks: List<Data> = listOf()
+    var tasks: List<Note> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -28,18 +28,18 @@ class MainRVAdapter(val onItemClick: ((Data) -> Unit)? = null) :
     override fun getItemCount() = tasks.size
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(note: Data) = with(itemView) {
+        fun bind(note: Note) = with(itemView) {
 
             title_view.text = note.title
             new_task.text = note.task
             val color = when (note.noteColor) {
-                Data.NoteColor.WHITE -> R.color.white
-                Data.NoteColor.YELLOW -> R.color.yellow
-                Data.NoteColor.GREEN -> R.color.green
-                Data.NoteColor.BLUE -> R.color.blue
-                Data.NoteColor.RED -> R.color.red
-                Data.NoteColor.VIOLET -> R.color.violet
-                Data.NoteColor.PINK -> R.color.pink
+                Note.NoteColor.WHITE -> R.color.white
+                Note.NoteColor.YELLOW -> R.color.yellow
+                Note.NoteColor.GREEN -> R.color.green
+                Note.NoteColor.BLUE -> R.color.blue
+                Note.NoteColor.RED -> R.color.red
+                Note.NoteColor.VIOLET -> R.color.violet
+                Note.NoteColor.PINK -> R.color.pink
             }
             card_view.setBackgroundColor(getColor(itemView.context, color))
             itemView.setOnClickListener {
