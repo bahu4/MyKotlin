@@ -1,5 +1,6 @@
 package com.example.mykotlin.ui.second
 
+import androidx.annotation.VisibleForTesting
 import com.example.mykotlin.data.NoteRepo
 import com.example.mykotlin.data.entity.Note
 import com.example.mykotlin.data.model.NoteResult
@@ -28,8 +29,8 @@ class SecondViewModel(val noteRepo: NoteRepo) :
             }
         }
     }
-
-    override fun onCleared() {
+    @VisibleForTesting
+    public override fun onCleared() {
         pendingNote?.let {
             noteRepo.saveNote(it)
         }
