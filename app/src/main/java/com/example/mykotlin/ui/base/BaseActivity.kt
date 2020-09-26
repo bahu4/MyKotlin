@@ -5,30 +5,57 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.example.mykotlin.R
 import com.example.mykotlin.data.errors.NoAuthException
 import com.firebase.ui.auth.AuthUI
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.consumeEach
+import kotlin.coroutines.CoroutineContext
 
-abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
+abstract class BaseActivity<S> : AppCompatActivity(), CoroutineScope {
     companion object {
         const val RC_SIGN_IN = 2424
     }
 
-    abstract val viewModel: BaseViewModel<T, S>
+    override val coroutineContext: CoroutineContext by lazy {
+        Dispatchers.Main + Job()
+    }
+
+    private lateinit var dataJob: Job
+    private lateinit var errorJob: Job
+
+    abstract val viewModel: BaseViewModel<S>
     abstract val layout: Int?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout?.let { setContentView(it) }
-        viewModel.getViewState().observe(this, Observer { state ->
-            state ?: return@Observer
-            state.error?.let { error ->
-                renderError(error)
-                return@Observer
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dataJob = launch {
+            viewModel.getViewState().consumeEach {
+                renderData(it)
             }
-            renderData(state.data)
-        })
+        }
+
+        errorJob = launch {
+            viewModel.getErrorChannel().consumeEach {
+                renderError(it)
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dataJob.cancel()
+        errorJob.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineContext.cancel()
     }
 
     protected fun renderError(error: Throwable?) {
@@ -60,5 +87,5 @@ abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    abstract fun renderData(data: T)
+    abstract fun renderData(data: S)
 }

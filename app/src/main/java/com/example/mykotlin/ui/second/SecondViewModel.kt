@@ -3,50 +3,42 @@ package com.example.mykotlin.ui.second
 import androidx.annotation.VisibleForTesting
 import com.example.mykotlin.data.NoteRepo
 import com.example.mykotlin.data.entity.Note
-import com.example.mykotlin.data.model.NoteResult
 import com.example.mykotlin.ui.base.BaseViewModel
+import kotlinx.coroutines.launch
 
-class SecondViewModel(val noteRepo: NoteRepo) :
-    BaseViewModel<SecondViewState.Data, SecondViewState>() {
+class SecondViewModel(val noteRepo: NoteRepo) : BaseViewModel<NoteData>() {
     private val pendingNote: Note?
-        get() = viewStateLiveData.value?.data?.note
+        get() = getViewState().poll()?.note
 
     fun save(note: Note) {
-        viewStateLiveData.value = SecondViewState(SecondViewState.Data(note = note))
+        setData(NoteData(note = note))
     }
 
-    fun loadNote(noteId: String) {
-        noteRepo.getNoteById(noteId).observeForever { result ->
-            result ?: return@observeForever
-            when (result) {
-                is NoteResult.Success<*> -> {
-                    viewStateLiveData.value =
-                        SecondViewState(SecondViewState.Data(note = result.data as? Note))
-                }
-                is NoteResult.Error -> {
-                    viewStateLiveData.value = SecondViewState(error = result.error)
-                }
+    fun loadNote(noteId: String) = launch {
+        try {
+            noteRepo.getNoteById(noteId).let {
+                setData(NoteData(note = it))
             }
+        } catch (e: Throwable) {
+            setError(e)
         }
     }
+
     @VisibleForTesting
     public override fun onCleared() {
-        pendingNote?.let {
-            noteRepo.saveNote(it)
+        launch {
+            pendingNote?.let {
+                noteRepo.saveNote(it)
+            }
         }
     }
 
-    fun deleteNote() {
-        pendingNote?.let {
-            noteRepo.deleteNote(it.id).observeForever() { result ->
-                result ?: return@observeForever
-                when (result) {
-                    is NoteResult.Success<*> -> viewStateLiveData.value =
-                        SecondViewState(SecondViewState.Data(isDeleted = true))
-                    is NoteResult.Error -> viewStateLiveData.value =
-                        SecondViewState(error = result.error)
-                }
-            }
+    fun deleteNote() = launch {
+        try {
+            pendingNote?.let { noteRepo.deleteNote(it.id) }
+            setData(NoteData(isDeleted = true))
+        } catch (e: Throwable) {
+            setError(e)
         }
     }
 }
