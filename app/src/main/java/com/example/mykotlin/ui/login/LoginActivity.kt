@@ -4,9 +4,8 @@ import com.example.mykotlin.ui.base.BaseActivity
 import com.example.mykotlin.ui.main.MainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class LoginActivity : BaseActivity<Boolean?, LoginViewState>() {
+class LoginActivity : BaseActivity<Boolean?>() {
     override val viewModel: LoginViewModel by viewModel()
-
     override val layout = null
 
     override fun onResume() {

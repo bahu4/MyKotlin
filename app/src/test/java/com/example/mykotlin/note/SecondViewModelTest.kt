@@ -6,7 +6,7 @@ import com.example.mykotlin.data.NoteRepo
 import com.example.mykotlin.data.entity.Note
 import com.example.mykotlin.data.model.NoteResult
 import com.example.mykotlin.ui.second.SecondViewModel
-import com.example.mykotlin.ui.second.SecondViewState
+import com.example.mykotlin.ui.second.NoteData
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -34,8 +34,8 @@ class SecondViewModelTest {
 
     @Test
     fun `loadNote should returns NoteData`() {
-        var result: SecondViewState.Data? = null
-        val testData = SecondViewState.Data(false, testNote)
+        var result: NoteData.Data? = null
+        val testData = NoteData.Data(false, testNote)
         viewModel.viewStateLiveData.observeForever {
             result = it.data
         }
@@ -65,8 +65,8 @@ class SecondViewModelTest {
 
     @Test
     fun `delete should returns Note with isDelete`() {
-        var result: SecondViewState.Data? = null
-        val testData = SecondViewState.Data(true)
+        var result: NoteData.Data? = null
+        val testData = NoteData.Data(true)
         viewModel.viewStateLiveData.observeForever {
             result = it?.data
         }

@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View.inflate
-import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import com.example.mykotlin.R
 import com.example.mykotlin.common.getColorInt
 import com.example.mykotlin.data.entity.Note
@@ -20,7 +17,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SecondActivity : BaseActivity<SecondViewState.Data, SecondViewState>() {
+class SecondActivity : BaseActivity<NoteData>() {
     companion object {
         private val EXTRA_NOTE = SecondActivity::class.java.name + "extra.NOTE"
         private const val DATE_FORMAT = "dd.MM.yy HH:mm"
@@ -33,9 +30,9 @@ class SecondActivity : BaseActivity<SecondViewState.Data, SecondViewState>() {
     }
 
     private var note: Note? = null
+    private var color: Note.NoteColor = Note.NoteColor.WHITE
     override val viewModel: SecondViewModel by viewModel()
     override val layout = R.layout.activity_second
-    private var color: Note.NoteColor = Note.NoteColor.WHITE
 
     val textChangeListener = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -57,7 +54,7 @@ class SecondActivity : BaseActivity<SecondViewState.Data, SecondViewState>() {
         init()
     }
 
-    override fun renderData(data: SecondViewState.Data) {
+    override fun renderData(data: NoteData) {
         if (data.isDeleted) finish()
         this.note = data.note
         init()

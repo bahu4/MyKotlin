@@ -6,19 +6,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mykotlin.R
 import com.example.mykotlin.data.entity.Note
 import com.example.mykotlin.ui.base.BaseActivity
-import com.example.mykotlin.ui.base.BaseViewModel
 import com.example.mykotlin.ui.login.LoginActivity
 import com.example.mykotlin.ui.second.SecondActivity
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
+class MainActivity : BaseActivity<List<Note>?>() {
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, MainActivity::class.java)
@@ -27,7 +25,6 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
     }
 
     override val viewModel: MainViewModel by viewModel()
-
     override val layout = R.layout.activity_main
     lateinit var adapter: MainRVAdapter
 

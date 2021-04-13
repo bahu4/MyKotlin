@@ -1,35 +1,31 @@
 package com.example.mykotlin.ui.main
 
 import androidx.annotation.VisibleForTesting
-import androidx.lifecycle.Observer
 import com.example.mykotlin.data.NoteRepo
 import com.example.mykotlin.data.entity.Note
 import com.example.mykotlin.data.model.NoteResult
 import com.example.mykotlin.ui.base.BaseViewModel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 
-class MainViewModel(noteRepo: NoteRepo) : BaseViewModel<List<Note>?, MainViewState>() {
-    private val notesObserver = Observer<NoteResult> { result ->
-        result ?: return@Observer
-        when (result) {
-            is NoteResult.Success<*> -> {
-                viewStateLiveData.value = MainViewState(taskList = result.data as? List<Note>)
-            }
-            is NoteResult.Error -> {
-                viewStateLiveData.value = MainViewState(error = result.error)
-            }
-        }
-    }
+class MainViewModel(noteRepo: NoteRepo) : BaseViewModel<List<Note>?>() {
 
     private val repositoryNotes = noteRepo.getNotes()
 
     init {
-        viewStateLiveData.value = MainViewState()
-        repositoryNotes.observeForever(notesObserver)
+        launch {
+            repositoryNotes.consumeEach {
+                when (it) {
+                    is NoteResult.Success<*> -> setData(it.data as? List<Note>)
+                    is NoteResult.Error -> setError(it.error)
+                }
+            }
+        }
     }
 
     @VisibleForTesting
     public override fun onCleared() {
-        repositoryNotes.removeObserver(notesObserver)
+        repositoryNotes.cancel()
         super.onCleared()
     }
 }
